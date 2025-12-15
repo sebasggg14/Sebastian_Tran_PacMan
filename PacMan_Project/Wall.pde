@@ -28,11 +28,11 @@ class Wall {
 
     if (i == 2) // left-top
     { 
-      rect(0, 50, 30, 275);
+      rect(0, 50, 30, 270);
       wallCoordinates[0][i] = 0;
       wallCoordinates[1][i] = 50;
       wallCoordinates[2][i] = 30;
-      wallCoordinates[3][i] = 275;
+      wallCoordinates[3][i] = 270;
     }
 
     if (i == 3) // left-bottom
@@ -46,11 +46,11 @@ class Wall {
 
     if (i == 4) // right-top
     { 
-      rect(970, 50, 30, 275);
+      rect(970, 50, 30, 270);
       wallCoordinates[0][i] = 970;
       wallCoordinates[1][i] = 50;
       wallCoordinates[2][i] = 30;
-      wallCoordinates[3][i] = 275;
+      wallCoordinates[3][i] = 270;
     }
 
     if (i == 5) // right-bottom
