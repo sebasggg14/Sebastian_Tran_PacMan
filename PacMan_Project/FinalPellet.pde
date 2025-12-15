@@ -38,17 +38,17 @@ class FinalPellet {
       for (int i = 3; i > 0; i--) {
         fill(255, 215, 0, 50);  // Gold color with transparency
         noStroke();
-        circle(xPos, yPos, 20 + i * 10);
+        ellipse(xPos, yPos, 20 + i * 10, 20 + i * 10);
       }
       
       // Main pellet body
       fill(255, 215, 0);  // Gold color
-      circle(xPos, yPos, 20);
+      ellipse(xPos, yPos, 20, 20);
       
       // Sparkle effect
       float sparkle = abs(sin(frameCount * 0.15)) * 255;
       fill(255, 255, 255, sparkle);
-      circle(xPos, yPos, 12);
+      ellipse(xPos, yPos, 12, 12);
       
       // Rotating stars around it
       pushMatrix();
@@ -59,7 +59,7 @@ class FinalPellet {
         float angle = radians(90 * i);
         float starX = cos(angle) * 25;
         float starY = sin(angle) * 25;
-        circle(starX, starY, 5);
+        ellipse(starX, starY, 5, 5);
       }
       popMatrix();
     }
