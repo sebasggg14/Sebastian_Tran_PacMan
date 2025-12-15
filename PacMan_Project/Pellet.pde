@@ -1,7 +1,6 @@
 class Pellet {
   // Features
   PImage sprite;
-  static int counter = 0;  // Keeps track of total pellets
   int xPos;
   int yPos;
   boolean isEaten;  // To track if pellet has been eaten
@@ -11,7 +10,6 @@ class Pellet {
     this.xPos = x;
     this.yPos = y;
     this.isEaten = false;
-    counter++;  // Increment total pellet count
   }
   
   // Create and display pellet
@@ -19,7 +17,7 @@ class Pellet {
     if (!isEaten) {
       fill(255, 255, 200);  // Light yellow color for pellet
       noStroke();
-      circle(xPos, yPos, 8);  // Small circle for pellet
+      ellipse(xPos, yPos, 8, 8);  // Small circle for pellet
     }
   }
   
@@ -27,7 +25,6 @@ class Pellet {
   void despawnPellet() {
     if (!isEaten) {
       isEaten = true;
-      counter--;  // Decrease pellet count
     }
   }
   
@@ -43,15 +40,5 @@ class Pellet {
   
   int getY() {
     return yPos;
-  }
-  
-  // Static method to get remaining pellet count
-  static int getCounter() {
-    return counter;
-  }
-  
-  // Reset counter (useful when restarting game)
-  static void resetCounter() {
-    counter = 0;
   }
 }

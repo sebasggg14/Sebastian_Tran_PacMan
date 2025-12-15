@@ -28,15 +28,15 @@ class Ghost {
       fill(255, 0, 0);  // Red when dangerous
     }
     noStroke();
-    circle(xPos, yPos, 30);  // Ghost body
+    ellipse(xPos, yPos, 30, 30);  // Ghost body
     
     // Simple eyes
     fill(255);
-    circle(xPos - 6, yPos - 3, 8);
-    circle(xPos + 6, yPos - 3, 8);
+    ellipse(xPos - 6, yPos - 3, 8, 8);
+    ellipse(xPos + 6, yPos - 3, 8, 8);
     fill(0);
-    circle(xPos - 6, yPos - 3, 4);
-    circle(xPos + 6, yPos - 3, 4);
+    ellipse(xPos - 6, yPos - 3, 4, 4);
+    ellipse(xPos + 6, yPos - 3, 4, 4);
   }
   
   // Move ghost randomly
@@ -69,19 +69,31 @@ class Ghost {
   // Check collision with wall and change direction
   void collision(Wall wall) {
     // Check if ghost is overlapping with wall
-    if (xPos + 15 > wall.xPos && xPos - 15 < wall.xPos + wall.width &&
-        yPos + 15 > wall.yPos && yPos - 15 < wall.yPos + wall.length) {
+    float ghostRadius = 15;
+    
+    // Simple boundary check - if touching wall, reverse direction
+    boolean hitWall = false;
+    
+    if (xPos + ghostRadius > wall.xPos && xPos - ghostRadius < wall.xPos + wall.width &&
+        yPos + ghostRadius > wall.yPos && yPos - ghostRadius < wall.yPos + wall.length) {
+      hitWall = true;
+    }
+    
+    if (hitWall) {
       // Reverse direction when hitting wall
-      if (direction == 0) direction = 2;  // Up -> Down
-      else if (direction == 1) direction = 3;  // Right -> Left
-      else if (direction == 2) direction = 0;  // Down -> Up
-      else if (direction == 3) direction = 1;  // Left -> Right
-      
-      // Move back slightly to prevent getting stuck
-      if (direction == 0) yPos -= speed * 2;
-      else if (direction == 1) xPos += speed * 2;
-      else if (direction == 2) yPos += speed * 2;
-      else if (direction == 3) xPos -= speed * 2;
+      if (direction == 0) {
+        direction = 2;  // Up -> Down
+        yPos += speed * 2;
+      } else if (direction == 1) {
+        direction = 3;  // Right -> Left
+        xPos -= speed * 2;
+      } else if (direction == 2) {
+        direction = 0;  // Down -> Up
+        yPos -= speed * 2;
+      } else if (direction == 3) {
+        direction = 1;  // Left -> Right
+        xPos += speed * 2;
+      }
     }
   }
   

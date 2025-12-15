@@ -17,14 +17,14 @@ class PowerUp {
     if (isActive) {
       fill(255, 150, 0);  // Orange color for power-up
       noStroke();
-      circle(xPos, yPos, 16);  // Larger than regular pellet
+      ellipse(xPos, yPos, 16, 16);  // Larger than regular pellet
       
       // Add pulsing effect
       float pulseSize = 16 + sin(frameCount * 0.1) * 3;
       noFill();
       stroke(255, 150, 0, 150);
       strokeWeight(2);
-      circle(xPos, yPos, pulseSize);
+      ellipse(xPos, yPos, pulseSize, pulseSize);
       strokeWeight(1);  // Reset stroke weight
     }
   }
