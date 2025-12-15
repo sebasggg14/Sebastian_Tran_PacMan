@@ -101,6 +101,7 @@ class PacMan
       testY + pacManSprite.height > wall.wallCoordinates[1][i]) 
       {
         println("pacman collides with wall");
+        isMoving = false;
         return true;
       }
     }

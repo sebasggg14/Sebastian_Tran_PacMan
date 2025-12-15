@@ -10,6 +10,8 @@ class Ghost {
   boolean isVulnerable;  // Can be eaten by PacMan
   
   Wall wall;
+  float prevX;
+  float prevY;
   
   // Constructor
   Ghost(float x, float y, float s) {
@@ -54,12 +56,10 @@ class Ghost {
   
   // Move ghost randomly
   void movement() {
-    // Randomly change direction occasionally
-    if (random(1) < 0.02) {  // 2% chance per frame
-      direction = int(random(4));
-    }
     
-    // Move based on direction
+    prevX = xPos;
+    prevY = yPos;
+    
     if (direction == 0) {  // Up
       yPos -= speed;
     } else if (direction == 1) {  // Right
@@ -80,37 +80,113 @@ class Ghost {
   }
   
   // Check collision with wall and change direction
-  void collision(Wall wall) {
-    // Simple boundary check - if touching wall, reverse direction
+  void collision(Wall wall)
+  {
     boolean hitWall = false;
-    
-    for (int i = 0; i <= 28; i++) // check through all of wallcoordinates 
+  
+    for (int i = 0; i < 29; i++)
+    {
+      if (xPos < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] &&
+          xPos + sprite.width > wall.wallCoordinates[0][i] &&
+          yPos < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+          yPos + sprite.height > wall.wallCoordinates[1][i])
       {
-      if (xPos < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] && 
-        xPos + sprite.width > wall.wallCoordinates[0][i] &&
-        yPos < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
-        yPos + sprite.height > wall.wallCoordinates[1][i]) 
-        {
-          hitWall = true;
-        }
-      
-      if (hitWall) {
-        // Reverse direction when hitting wall
-        if (direction == 0) {
-          direction = 2;  // Up -> Down
-          yPos += speed * 2;
-        } else if (direction == 1) {
-          direction = 3;  // Right -> Left
-          xPos -= speed * 2;
-        } else if (direction == 2) {
-          direction = 0;  // Down -> Up
-          yPos -= speed * 2;
-        } else if (direction == 3) {
-          direction = 1;  // Left -> Right
-          xPos += speed * 2;
-        }
+        hitWall = true;
+        break;
       }
     }
+  
+    if (hitWall)
+    {
+      xPos = prevX;
+      yPos = prevY;
+  
+      direction = pickNewDirection(wall);
+    }
+  }
+  
+  int pickNewDirection(Wall wall)
+  {
+    int[] possibleDirections = new int[4];
+    int count = 0;
+  
+    for (int d = 0; d < 4; d++)
+    {
+      boolean isOpposite =
+        (direction == 0 && d == 2) ||
+        (direction == 2 && d == 0) ||
+        (direction == 1 && d == 3) ||
+        (direction == 3 && d == 1);
+  
+      if (isOpposite)
+      {
+        continue;
+      }
+  
+      float testX = xPos;
+      float testY = yPos;
+  
+      if (d == 0)
+      {
+        testY -= speed;
+      }
+      else if (d == 1)
+      {
+        testX += speed;
+      }
+      else if (d == 2)
+      {
+        testY += speed;
+      }
+      else if (d == 3)
+      {
+        testX -= speed;
+      }
+  
+      if (!wouldCollide(wall, testX, testY))
+      {
+        possibleDirections[count] = d;
+        count++;
+      }
+    }
+  
+    if (count == 0)
+    {
+      if (direction == 0)
+      {
+        return 2;
+      }
+      else if (direction == 2)
+      {
+        return 0;
+      }
+      else if (direction == 1)
+      {
+        return 3;
+      }
+      else
+      {
+        return 1;
+      }
+    }
+  
+    return possibleDirections[(int)random(count)];
+  }
+  
+  boolean wouldCollide(Wall wall, float testX, float testY)
+  {
+    for (int i = 0; i < 29; i++)
+    {
+      if (testX < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] &&
+          testX + sprite.width > wall.wallCoordinates[0][i] &&
+          testY < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+          testY + sprite.height > wall.wallCoordinates[1][i])
+      {
+        return true;
+      }
+    }
+  
+    return false;
   }
   
   // Make ghost vulnerable (can be eaten)
