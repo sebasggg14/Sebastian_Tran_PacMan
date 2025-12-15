@@ -12,12 +12,12 @@ void setup()
 void draw()
 {
   background(25);
-  for (int i = 0; i <= 42; i ++)
+  for (int i = 0; i <= 28; i ++)
   {
     map.createWall(i);
   }
   player.drawPacMan();
-  player.updateMovement();
+  player.updateMovement(map);
 }
 
 void keyPressed()

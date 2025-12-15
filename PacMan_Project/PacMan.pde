@@ -17,6 +17,10 @@ class PacMan
   boolean down = false;
   boolean isMoving = false;
   
+  // for collisions
+  float nextX;
+  float nextY;
+  
   PacMan(float x, float y, float speed, int health)
   {
     this.x = x;
@@ -29,11 +33,14 @@ class PacMan
   void drawPacMan()
   {
     // code to switch sprite for pacman animation
-    if (spriteCounter < 7) {
+    if (spriteCounter < 7) 
+    {
       pacManSprite = loadImage("PacMan_Closed.png");
-    } else if (spriteCounter == 7 || spriteCounter == 26) {
+    } else if (spriteCounter == 7 || spriteCounter == 26) 
+    {
       pacManSprite = loadImage("PacMan_Semi.png");
-    } else if (spriteCounter == 15) {
+    } else if (spriteCounter == 15) 
+    {
       pacManSprite = loadImage("PacMan_Open.png");
     }
   
@@ -43,14 +50,21 @@ class PacMan
   
     float angle = 0; // this will get pacmans rotation in radians based off of his movement direction
     
-    if (left) {
-      angle = 0;           // face left
-    } else if (up) {
+    if (left) 
+    {
+      angle = 0; // face left
+    } 
+    else if (up) 
+    {
       angle = PI / 2.0; // face up
-    } else if (down) {
-      angle = 3 * PI / 2.0;     // face down
-    } else {
-      angle = PI;            // face right
+    }
+    else if (down) 
+    {
+      angle = 3 * PI / 2.0; // face down
+    } 
+    else 
+    {
+      angle = PI; // face right
     }
   
     // internally saves the transform of pacman to then apply rotation 
@@ -70,37 +84,82 @@ class PacMan
     popMatrix(); // update all transforms made including the new sprite 
   
     // so it only does the anim if the pacman is moving
-    if (isMoving) {
+    if (isMoving) 
+    {
       spriteCounter++;
     }
   }
   
-  void checkCollisions (Wall wall)
+  boolean checkCollisions (Wall wall, float testX, float testY)
   {
-    
+    for (int i = 0; i <= 28; i++)
+    {
+      // check that detects if the pacman is ever overlapping with one of the rects based off of the matrix 
+      if (testX < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] && 
+      testX + pacManSprite.width > wall.wallCoordinates[0][i] &&
+      testY < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+      testY + pacManSprite.height > wall.wallCoordinates[1][i]) 
+      {
+        println("pacman collides with wall");
+        return true;
+      }
+    }
+    return false;
   }
   
-  void updateMovement()
+  void checkDeath()
   {
+    if (health == 0)
+    {
+      
+    }
+  }
+  
+  void updateMovement(Wall wall)
+  { 
+    nextX = x;
+    nextY = y;
     if (left)
     {
       isMoving = true;
-      x -= speed;
+      nextX -= speed;
     }
     if (right)
     {
       isMoving = true;
-      x += speed;
+      nextX += speed;
     }
     if (up)
     {
       isMoving = true;
-      y -= speed;
+      nextY -= speed;
     }
     if (down)
     {
       isMoving = true;
-      y += speed;
+      nextY += speed;
+    }
+    
+    // update x 
+    if (!checkCollisions(wall, nextX, y))
+    {
+      x = nextX;
+    }
+    
+    //update y
+    if (!checkCollisions(wall, x, nextY))
+    {
+      y = nextY;
+    }
+    
+    // for cross-screen movement (only implementing on the x axis since the only open spot is on the ex axis
+    if (x < 0 - pacManSprite.width)
+    {
+      x = width;
+    }
+    if (x > width)
+    {
+      x = -pacManSprite.width;
     }
   }
   
