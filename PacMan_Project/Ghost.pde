@@ -2,15 +2,17 @@ class Ghost {
   // Features
   PImage sprite;
   int direction;  // 0=up, 1=right, 2=down, 3=left
-  int xPos;
-  int yPos;
-  int speed;
-  int baseX;  // Spawn position X
-  int baseY;  // Spawn position Y
+  float xPos;
+  float yPos;
+  float speed;
+  float baseX;  // Spawn position X
+  float baseY;  // Spawn position Y
   boolean isVulnerable;  // Can be eaten by PacMan
   
+  Wall wall;
+  
   // Constructor
-  Ghost(int x, int y, int s) {
+  Ghost(float x, float y, float s) {
     this.xPos = x;
     this.yPos = y;
     this.baseX = x;  // Remember spawn location
@@ -21,22 +23,33 @@ class Ghost {
   }
   
   // Display the ghost
-  void display() {
-    if (isVulnerable) {
-      fill(50, 50, 255);  // Blue when vulnerable
-    } else {
-      fill(255, 0, 0);  // Red when dangerous
+  void display() 
+  {
+    if (isVulnerable) 
+    {
+      
+    } 
+    else 
+    {
+      if (direction == 0)
+      {
+        sprite = loadImage("Blinky_Up.png");
+      }
+      if (direction == 1)
+      {
+        sprite = loadImage("Blinky_Right.png");
+      }
+      if (direction == 2)
+      {
+        sprite = loadImage("Blinky_Down.png");
+      }
+      if (direction == 3)
+      {
+        sprite = loadImage("Blinky_Left.png");
+      }
     }
-    noStroke();
-    ellipse(xPos, yPos, 30, 30);  // Ghost body
-    
-    // Simple eyes
-    fill(255);
-    ellipse(xPos - 6, yPos - 3, 8, 8);
-    ellipse(xPos + 6, yPos - 3, 8, 8);
-    fill(0);
-    ellipse(xPos - 6, yPos - 3, 4, 4);
-    ellipse(xPos + 6, yPos - 3, 4, 4);
+    // load the sprite based 
+    image(sprite, xPos, yPos);
   }
   
   // Move ghost randomly
@@ -68,31 +81,34 @@ class Ghost {
   
   // Check collision with wall and change direction
   void collision(Wall wall) {
-    // Check if ghost is overlapping with wall
-    float ghostRadius = 15;
-    
     // Simple boundary check - if touching wall, reverse direction
     boolean hitWall = false;
     
-    if (xPos + ghostRadius > wall.xPos && xPos - ghostRadius < wall.xPos + wall.width &&
-        yPos + ghostRadius > wall.yPos && yPos - ghostRadius < wall.yPos + wall.length) {
-      hitWall = true;
-    }
-    
-    if (hitWall) {
-      // Reverse direction when hitting wall
-      if (direction == 0) {
-        direction = 2;  // Up -> Down
-        yPos += speed * 2;
-      } else if (direction == 1) {
-        direction = 3;  // Right -> Left
-        xPos -= speed * 2;
-      } else if (direction == 2) {
-        direction = 0;  // Down -> Up
-        yPos -= speed * 2;
-      } else if (direction == 3) {
-        direction = 1;  // Left -> Right
-        xPos += speed * 2;
+    for (int i = 0; i <= 28; i++) // check through all of wallcoordinates 
+      {
+      if (xPos < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] && 
+        xPos + sprite.width > wall.wallCoordinates[0][i] &&
+        yPos < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+        yPos + sprite.height > wall.wallCoordinates[1][i]) 
+        {
+          hitWall = true;
+        }
+      
+      if (hitWall) {
+        // Reverse direction when hitting wall
+        if (direction == 0) {
+          direction = 2;  // Up -> Down
+          yPos += speed * 2;
+        } else if (direction == 1) {
+          direction = 3;  // Right -> Left
+          xPos -= speed * 2;
+        } else if (direction == 2) {
+          direction = 0;  // Down -> Up
+          yPos -= speed * 2;
+        } else if (direction == 3) {
+          direction = 1;  // Left -> Right
+          xPos += speed * 2;
+        }
       }
     }
   }
@@ -113,11 +129,11 @@ class Ghost {
   }
   
   // Get position for collision detection
-  int getX() {
+  float getX() {
     return xPos;
   }
   
-  int getY() {
+  float getY() {
     return yPos;
   }
 }

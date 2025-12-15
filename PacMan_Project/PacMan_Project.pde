@@ -1,5 +1,6 @@
 PacMan player;
 Wall map;
+Ghost blinky;
 
 
 void setup() 
@@ -7,6 +8,7 @@ void setup()
   size(1000,600); // size of the window 
   player = new PacMan(475, 525, 2.5, 3);
   map = new Wall();
+  blinky = new Ghost(35, 85, 2.5);
 }
 
 void draw()
@@ -17,6 +19,9 @@ void draw()
     map.createWall(i);
   }
   player.drawPacMan();
+  blinky.display();
+  blinky.movement();
+  blinky.collision(map);
   player.updateMovement(map);
 }
 
