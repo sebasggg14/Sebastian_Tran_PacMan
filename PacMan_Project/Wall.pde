@@ -30,8 +30,10 @@ class Wall {
     // mid-row horizontals
     if (i == 16) rect(100, 250, 200, 25); // mid-left
     if (i == 17) rect(700, 250, 200, 25); // mid-right
-    if (i == 18) rect(100, 350, 200, 25); // lower-mid-left
-    if (i == 19) rect(700, 350, 200, 25); // lower-mid-right
+    if (i == 18) rect(100, 320, 200, 25); // lower-mid-left
+    if (i == 19) rect(700, 320, 200, 25); // lower-mid-right
+    if (i == 20) rect(160, 400, 200, 40);
+    if (i == 21) rect(640, 400, 200, 40);
 
     //// vertical pillars in lower mid
     //if (i == 20) rect(200, 350, 30, 150); // left pillar
