@@ -41,20 +41,23 @@ class PacMan
   
   void drawPacMan()
   {
-    // code to switch sprite for pacman animation
-    if (spriteCounter < 7) 
-    {
-      pacManSprite = loadImage("PacMan_Closed.png");
-    } else if (spriteCounter == 7 || spriteCounter == 26) 
-    {
-      pacManSprite = loadImage("PacMan_Semi.png");
-    } else if (spriteCounter == 15) 
-    {
-      pacManSprite = loadImage("PacMan_Open.png");
-    }
-  
-    if (spriteCounter > 29) { // reset counter
-      spriteCounter = 0;
+    // code to switch sprite for moving pacman animation
+    if (!respawning)
+      {
+      if (spriteCounter < 7) 
+      {
+        pacManSprite = loadImage("PacMan_Closed.png");
+      } else if (spriteCounter == 7 || spriteCounter == 26) 
+      {
+        pacManSprite = loadImage("PacMan_Semi.png");
+      } else if (spriteCounter == 15) 
+      {
+        pacManSprite = loadImage("PacMan_Open.png");
+      }
+    
+      if (spriteCounter > 29) { // reset counter
+        spriteCounter = 0;
+      }
     }
   
     float angle = 0; // this will get pacmans rotation in radians based off of his movement direction
@@ -144,26 +147,38 @@ class PacMan
       pacManSprite = loadImage("PacMan_Death_Start.png");
     }
     
-    if (respawning)
+    if (respawning) //initiate counter
     {
       respawnCounter++;
     }
     
-    if (respawnCounter == 50)
-    {
-      pacManSprite = loadImage("PacMan_Death_End.png");
-    }
+    // animation 
+    if (respawnCounter == 10) pacManSprite = loadImage("PacMan_Death_Mid1.png");
+    if (respawnCounter == 20) pacManSprite = loadImage("PacMan_Death_Mid2.png");
+    if (respawnCounter == 30) pacManSprite = loadImage("PacMan_Death_Mid3.png");
+    if (respawnCounter == 40) pacManSprite = loadImage("PacMan_Death_Mid4.png");
+    if (respawnCounter == 50) pacManSprite = loadImage("PacMan_Death_Mid5.png");
+    if (respawnCounter == 60) pacManSprite = loadImage("PacMan_Death_Mid6.png");
+    if (respawnCounter == 70) pacManSprite = loadImage("PacMan_Death_Mid7.png");
+    if (respawnCounter == 80) pacManSprite = loadImage("PacMan_Death_End.png");
+    if (respawnCounter == 90) pacManSprite = loadImage("Sprite_Empty.png");
     
     if (respawnCounter == 120)
     {
        health--;
        x = xSpawn;
        y = ySpawn;
-       respawnCounter = 0;
-       ghost.respawn();
-       isMoving = false;
-       respawning = false;
-       return;
+       right = false; 
+       left = false;
+       up = false;
+       down = false;
+    }
+    if (respawnCounter == 150)
+    {
+      ghost.respawn(); // put the ghost back in its starting position
+      respawnCounter = 0; 
+      respawning = false;
+      return;
     }
   }
   

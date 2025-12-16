@@ -19,7 +19,7 @@ void draw()
     map.createWall(i);
   }
   player.drawPacMan();
-  blinky.display();
+  blinky.display(player);
   blinky.movement();
   blinky.collision(map);
   player.updateMovement(map);

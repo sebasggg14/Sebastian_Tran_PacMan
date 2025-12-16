@@ -13,6 +13,8 @@ class Ghost {
   float prevX;
   float prevY;
   
+  PacMan player;
+  
   // Constructor
   Ghost(float x, float y, float s) {
     this.xPos = x;
@@ -25,29 +27,37 @@ class Ghost {
   }
   
   // Display the ghost
-  void display() 
+  void display(PacMan player) 
   {
+    
     if (isVulnerable) 
     {
       
     } 
     else 
     {
-      if (direction == 0)
+      if (!player.respawning)
       {
-        sprite = loadImage("Blinky_Up.png");
+        if (direction == 0)
+        {
+          sprite = loadImage("Blinky_Up.png");
+        }
+        if (direction == 1)
+        {
+          sprite = loadImage("Blinky_Right.png");
+        }
+        if (direction == 2)
+        {
+          sprite = loadImage("Blinky_Down.png");
+        }
+        if (direction == 3)
+        {
+          sprite = loadImage("Blinky_Left.png");
+        }
       }
-      if (direction == 1)
+      else
       {
-        sprite = loadImage("Blinky_Right.png");
-      }
-      if (direction == 2)
-      {
-        sprite = loadImage("Blinky_Down.png");
-      }
-      if (direction == 3)
-      {
-        sprite = loadImage("Blinky_Left.png");
+        sprite = loadImage("Sprite_Empty.png");
       }
     }
     // load the sprite based 
