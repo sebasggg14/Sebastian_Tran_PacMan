@@ -23,6 +23,8 @@ void draw()
   blinky.movement();
   blinky.collision(map);
   player.updateMovement(map);
+  
+  player.checkRespawn(blinky);
 }
 
 void keyPressed()

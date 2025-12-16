@@ -75,7 +75,6 @@ class Ghost {
   void respawn() {
     xPos = baseX;
     yPos = baseY;
-    direction = int(random(4));
     isVulnerable = false;
   }
   
