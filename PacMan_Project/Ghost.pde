@@ -2,15 +2,21 @@ class Ghost {
   // Features
   PImage sprite;
   int direction;  // 0=up, 1=right, 2=down, 3=left
-  int xPos;
-  int yPos;
-  int speed;
-  int baseX;  // Spawn position X
-  int baseY;  // Spawn position Y
+  float xPos;
+  float yPos;
+  float speed;
+  float baseX;  // Spawn position X
+  float baseY;  // Spawn position Y
   boolean isVulnerable;  // Can be eaten by PacMan
   
+  Wall wall;
+  float prevX;
+  float prevY;
+  
+  PacMan player;
+  
   // Constructor
-  Ghost(int x, int y, int s) {
+  Ghost(float x, float y, float s) {
     this.xPos = x;
     this.yPos = y;
     this.baseX = x;  // Remember spawn location
@@ -21,32 +27,49 @@ class Ghost {
   }
   
   // Display the ghost
-  void display() {
-    if (isVulnerable) {
-      fill(50, 50, 255);  // Blue when vulnerable
-    } else {
-      fill(255, 0, 0);  // Red when dangerous
-    }
-    noStroke();
-    ellipse(xPos, yPos, 30, 30);  // Ghost body
+  void display(PacMan player) 
+  {
     
-    // Simple eyes
-    fill(255);
-    ellipse(xPos - 6, yPos - 3, 8, 8);
-    ellipse(xPos + 6, yPos - 3, 8, 8);
-    fill(0);
-    ellipse(xPos - 6, yPos - 3, 4, 4);
-    ellipse(xPos + 6, yPos - 3, 4, 4);
+    if (isVulnerable) 
+    {
+      
+    } 
+    else 
+    {
+      if (!player.respawning)
+      {
+        if (direction == 0)
+        {
+          sprite = loadImage("Blinky_Up.png");
+        }
+        if (direction == 1)
+        {
+          sprite = loadImage("Blinky_Right.png");
+        }
+        if (direction == 2)
+        {
+          sprite = loadImage("Blinky_Down.png");
+        }
+        if (direction == 3)
+        {
+          sprite = loadImage("Blinky_Left.png");
+        }
+      }
+      else
+      {
+        sprite = loadImage("Sprite_Empty.png");
+      }
+    }
+    // load the sprite based 
+    image(sprite, xPos, yPos);
   }
   
   // Move ghost randomly
   void movement() {
-    // Randomly change direction occasionally
-    if (random(1) < 0.02) {  // 2% chance per frame
-      direction = int(random(4));
-    }
     
-    // Move based on direction
+    prevX = xPos;
+    prevY = yPos;
+    
     if (direction == 0) {  // Up
       yPos -= speed;
     } else if (direction == 1) {  // Right
@@ -62,39 +85,117 @@ class Ghost {
   void respawn() {
     xPos = baseX;
     yPos = baseY;
-    direction = int(random(4));
     isVulnerable = false;
   }
   
   // Check collision with wall and change direction
-  void collision(Wall wall) {
-    // Check if ghost is overlapping with wall
-    float ghostRadius = 15;
-    
-    // Simple boundary check - if touching wall, reverse direction
+  void collision(Wall wall)
+  {
     boolean hitWall = false;
-    
-    if (xPos + ghostRadius > wall.xPos && xPos - ghostRadius < wall.xPos + wall.width &&
-        yPos + ghostRadius > wall.yPos && yPos - ghostRadius < wall.yPos + wall.length) {
-      hitWall = true;
-    }
-    
-    if (hitWall) {
-      // Reverse direction when hitting wall
-      if (direction == 0) {
-        direction = 2;  // Up -> Down
-        yPos += speed * 2;
-      } else if (direction == 1) {
-        direction = 3;  // Right -> Left
-        xPos -= speed * 2;
-      } else if (direction == 2) {
-        direction = 0;  // Down -> Up
-        yPos -= speed * 2;
-      } else if (direction == 3) {
-        direction = 1;  // Left -> Right
-        xPos += speed * 2;
+  
+    for (int i = 0; i < 29; i++)
+    {
+      if (xPos < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] &&
+          xPos + sprite.width > wall.wallCoordinates[0][i] &&
+          yPos < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+          yPos + sprite.height > wall.wallCoordinates[1][i])
+      {
+        hitWall = true;
+        break;
       }
     }
+  
+    if (hitWall)
+    {
+      xPos = prevX;
+      yPos = prevY;
+  
+      direction = pickNewDirection(wall);
+    }
+  }
+  
+  int pickNewDirection(Wall wall)
+  {
+    int[] possibleDirections = new int[4];
+    int count = 0;
+  
+    for (int d = 0; d < 4; d++)
+    {
+      boolean isOpposite =
+        (direction == 0 && d == 2) ||
+        (direction == 2 && d == 0) ||
+        (direction == 1 && d == 3) ||
+        (direction == 3 && d == 1);
+  
+      if (isOpposite)
+      {
+        continue;
+      }
+  
+      float testX = xPos;
+      float testY = yPos;
+  
+      if (d == 0)
+      {
+        testY -= speed;
+      }
+      else if (d == 1)
+      {
+        testX += speed;
+      }
+      else if (d == 2)
+      {
+        testY += speed;
+      }
+      else if (d == 3)
+      {
+        testX -= speed;
+      }
+  
+      if (!wouldCollide(wall, testX, testY))
+      {
+        possibleDirections[count] = d;
+        count++;
+      }
+    }
+  
+    if (count == 0)
+    {
+      if (direction == 0)
+      {
+        return 2;
+      }
+      else if (direction == 2)
+      {
+        return 0;
+      }
+      else if (direction == 1)
+      {
+        return 3;
+      }
+      else
+      {
+        return 1;
+      }
+    }
+  
+    return possibleDirections[(int)random(count)];
+  }
+  
+  boolean wouldCollide(Wall wall, float testX, float testY)
+  {
+    for (int i = 0; i < 29; i++)
+    {
+      if (testX < wall.wallCoordinates[0][i] + wall.wallCoordinates[2][i] &&
+          testX + sprite.width > wall.wallCoordinates[0][i] &&
+          testY < wall.wallCoordinates[1][i] + wall.wallCoordinates[3][i] &&
+          testY + sprite.height > wall.wallCoordinates[1][i])
+      {
+        return true;
+      }
+    }
+  
+    return false;
   }
   
   // Make ghost vulnerable (can be eaten)
@@ -113,11 +214,11 @@ class Ghost {
   }
   
   // Get position for collision detection
-  int getX() {
+  float getX() {
     return xPos;
   }
   
-  int getY() {
+  float getY() {
     return yPos;
   }
 }
