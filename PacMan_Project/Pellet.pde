@@ -41,4 +41,33 @@ class Pellet {
   int getY() {
     return yPos;
   }
+  
+   
+    
+boolean checkCollisions(PacMan pac) {
+  float pelletR = 4; // ellipse 8x8
+
+  float pacW = 36;
+  float pacH = 36;
+
+  // if you DO have a sprite loaded, use it:
+  if (pac.pacManSprite != null) {
+    pacW = pac.pacManSprite.width;
+    pacH = pac.pacManSprite.height;
+  }
+
+  float closestX = constrain(xPos, pac.x, pac.x + pacW);
+  float closestY = constrain(yPos, pac.y, pac.y + pacH);
+
+  float dx = xPos - closestX;
+  float dy = yPos - closestY;
+
+  boolean hit = (dx*dx + dy*dy) <= pelletR * pelletR;
+
+  if (hit) {
+    println("pacman eats pellet");
+    isEaten = true;
+  }
+  return hit;
+}
 }
